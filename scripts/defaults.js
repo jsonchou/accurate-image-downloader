@@ -17,7 +17,6 @@
     folder_name: '',
     new_file_name: '',
     filter_url: '',
-    filter_url_mode: 'normal',
     filter_min_width: 0,
     filter_min_width_enabled: false,
     filter_max_width: 3000,

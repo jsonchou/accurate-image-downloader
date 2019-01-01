@@ -245,49 +245,6 @@
       // Copy all images initially
       visibleImages = allImages.slice(0);
 
-      if (ls.show_url_filter === 'true') {
-        var filterValue = $('#filter_textbox').val();
-        if (filterValue) {
-          switch (ls.filter_url_mode) {
-            case 'normal':
-              var terms = filterValue.split(' ');
-              visibleImages = visibleImages.filter(function (url) {
-                for (var i = 0; i < terms.length; i++) {
-                  var term = terms[i];
-                  if (term.length !== 0) {
-                    var expected = (term[0] !== '-');
-                    if (!expected) {
-                      term = term.substr(1);
-                      if (term.length === 0) {
-                        continue;
-                      }
-                    }
-                    var found = (url.indexOf(term) !== -1);
-                    if (found !== expected) {
-                      return false;
-                    }
-                  }
-                }
-                return true;
-              });
-              break;
-            case 'wildcard':
-              filterValue = filterValue.replace(/([.^$[\]\\(){}|-])/g, '\\$1').replace(/([?*+])/, '.$1');
-              /* fall through */
-            case 'regex':
-              visibleImages = visibleImages.filter(function (url) {
-                try {
-                  return url.match(filterValue);
-                }
-                catch (e) {
-                  return false;
-                }
-              });
-              break;
-          }
-        }
-      }
-
       if (ls.show_only_images_from_links === 'true' && ls.only_images_from_links === 'true') {
         visibleImages = visibleImages.filter(function (url) {
           return linkedImages[url];
