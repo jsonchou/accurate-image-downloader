@@ -1,7 +1,5 @@
 # accurate-image-downloader
-a **Chrome Extension** of **accurate** download image
-
-**accurate**, **accurate**, **accurate**
+a **Chrome Extension** of **accurate** download image **accurate**, **accurate**, **accurate**
 
 ## WHY THIS EXTENSION
 
