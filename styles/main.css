@@ -19,7 +19,7 @@
 }
 
 body { 
- font: 13px/1.5em 'Lucida Grande', Arial, sans-serif; 
+ font: 16px/1.5em 'PingFang-SC-Regular,arial'; 
  color: var(--foreground); 
 }
 
@@ -148,4 +148,17 @@ input[type='button'].danger:hover,
 input[type='button'].danger:focus,
 input[type='button'].danger:active { 
  background: var(--danger); 
+}
+
+.flex { 
+ display: flex; 
+ align-items: center; 
+ justify-content: space-around; 
+ flex-wrap: wrap; 
+}
+
+.flex.start { justify-content: flex-start; } 
+
+.mb20 { 
+ margin-bottom: 20px; 
 }

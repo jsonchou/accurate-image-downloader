@@ -1,151 +1,109 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <title>accurate-image-downloaderr</title>
 
-    <link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />
+    <link rel="stylesheet" href="../styles/main.css" type="text/css" />
     <style>
-      body
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        body
       {
-        margin: 0;
-        padding: 0 2px 0 0; /* compensate for browser defaults */
-        min-width: 200px;
-        min-height: 150px;
         box-sizing: border-box;
+      } 
+      #adi-wrap{
+        min-width: 400px;
+        min-height: 250px;
+        margin: 0 auto;
+       
+        padding: 20px;
       }
-
-      .grid
-      {
-        width: 100%;
-        border-collapse: collapse;
+      #adi-wrap *{
+          box-sizing: border-box;
+          list-style: none;
       }
-      .grid td { padding: 0 2px; }
-      .grid td input[type="text"],
-      .grid td input[type="button"],
-      .grid td input[type="number"],
-      .grid td select { width: 100%; }
+      .box{ border:1px solid #ccc;padding: 10px;}
+      .box .dimension{width: 30%;}
+      .box .width,.box .height{width: 60px;height: 100%;height: 18px;border:1px solid #ccc;}
+      .box .sub{width: 30%;height: 40px; } 
+      .box .btn{width: 20%;height: 40px; border:0;text-align: center;line-height: 40px;background:#3b5998;color: #fff;cursor: pointer;font-size: 10px; } 
 
-      #filters_container
-      {
-        position: fixed;
-        top: 0px;
-        box-sizing: border-box;
-        width: 100%;
-        padding: 2px 2px 2px 0; /* compensate for browser defaults */
-        background: #fff;
-        border-bottom: 1px solid #ccc;
-      }
+      .box-list  ul{padding: 0;margin: 0;}
+      .box-list li{width: 33.333333%;display: inline-block;position: relative;}
+      .box-list li .p2{position: absolute;bottom: 0;left: 0;}
+      .box-list li img{width: 100%;display: block}
 
-      #filters_container input[type="text"],
-      #filters_container input[type="button"],
-      #filters_container input[type="number"],
-      #filters_container select
-      {
-        height: 26px;
-        margin-bottom: 4px;
-      }
-
-      #only_images_from_links_container { padding: 1px; }
-
-      #images_cache { display: none; }
-      #images_table { margin-top: 2px; }
-      #images_table img { cursor: pointer; }
-
-      .open_image_button,
-      .download_image_button
-      {
-        width: 24px;
-        height: 24px;
-        cursor: pointer;
-
-        background-size: 24px;
-        background-repeat: no-repeat;
-        background-position: center;
-      }
-
-      .open_image_button     { background-image: url("/images/open.png"); }
-      .download_image_button { background-image: url("/images/download.png"); }
     </style>
 
     <script src="/lib/zepto.js"></script>
-    <script src="/lib/jss.js"></script>
-
     <script src="/scripts/defaults.js"></script>
     <script src="/scripts/popup.js"></script>
-  </head>
+</head>
 
-  <body>
-    <div id="filters_container">
-      <table id="filter_inputs_container" class="grid">
-        <colgroup>
-          <col>
-          <col style="width: 100px;">
-        </colgroup>
-        <tr>
-          <td>
-            <input type="text" id="folder_name_textbox" placeholder="SAVE TO SUBFOLDER" title="Set the name of the subfolder you want to download the images to." />
-          </td>
-          <td>
-            <input type="button" id="download_button" class="accent" value="DOWNLOAD" disabled="true" />
-          </td>
-        </tr>
-        <tr>
-          <td colspan="2">
-            <input type="text" id="file_renaming_textbox" placeholder="RENAME FILES" title="Set a new file name for the images you want to download." />
-          </td>
-        </tr>
-       
-      </table>
+<body>
+    <div id="adi-wrap">
 
-      <table class="grid">
-        <colgroup>
-          <col style="width: 45px;">
-          <col style="width: 40px;">
-          <col style="width: 10px;">
-          <col>
-          <col style="width: 10px;">
-          <col style="width: 40px;">
-        </colgroup>
-        <tr id="image_width_filter">
-          <td>Width:</td>
-          <td style="text-align: right;">
-            <label for="image_width_filter_min_checkbox">
-              <small id="image_width_filter_min"></small>
-            </label>
-          </td>
-          <td><input type="checkbox" id="image_width_filter_min_checkbox" /></td>
-          <td><div id="image_width_filter_slider"></div></td>
-          <td><input type="checkbox" id="image_width_filter_max_checkbox" /></td>
-          <td style="text-align: right;">
-            <label for="image_width_filter_max_checkbox">
-              <small id="image_width_filter_max"></small>
-            </label>
-          </td>
-        </tr>
-        <tr id="image_height_filter">
-          <td>Height:</td>
-          <td style="text-align: right;">
-            <label for="image_height_filter_min_checkbox">
-              <small id="image_height_filter_min"></small>
-            </label>
-          </td>
-          <td><input type="checkbox" id="image_height_filter_min_checkbox" /></td>
-          <td><div id="image_height_filter_slider"></div></td>
-          <td><input type="checkbox" id="image_height_filter_max_checkbox" /></td>
-          <td style="text-align: right;">
-            <label for="image_height_filter_max_checkbox">
-              <small id="image_height_filter_max"></small>
-            </label>
-          </td>
-        </tr>
-      </table>
+        <div class="box flex mb20">
+            <div class="dimension">
+                <p>W:<input type="text" value="200" class="width" /> px</p>
+                <p>H:<input type="text" value="200" class="height" /> px</p>
+            </div>
+            <input type="text" class="sub" placeholder="SAVE TO SUBFOLDER" title="Set the name of the subfolder you want to download the images to." />
+            <span class="btn" disabled="true">DOWNLOAD</span>
+        </div>
 
-      <label id="only_images_from_links_container" title="Only show images from direct links on the page; this can be useful on sites like Reddit">
-        <input type="checkbox" id="only_images_from_links_checkbox" />Only images from links
-      </label>
-    </div>
+        <div class="box-list">
+            <div class="control-bar">
+                <label><input type="checkbox" name="" checked> ALL </label>
+            </div>
+            <ul class="flex start">
+                <li>
+                    <p class="p1"><img src="https://i.gtimg.cn/qqlive/img/jpgcache/files/qqvideo/l/lqojerhydlqkf9t_y.jpg"></p>
+                    <p class="p2"><input type="checkbox" checked name="" id=""></p>
+                </li>
+                <li>
+                    <p class="p1"><img src="https://i.gtimg.cn/qqlive/img/jpgcache/files/qqvideo/l/lqojerhydlqkf9t_y.jpg"></p>
+                    <p class="p2"><input type="checkbox" checked name="" id=""></p>
+                </li>
+                <li>
+                    <p class="p1"><img src="https://i.gtimg.cn/qqlive/img/jpgcache/files/qqvideo/l/lqojerhydlqkf9t_y.jpg"></p>
+                    <p class="p2"><input type="checkbox" checked name="" id=""></p>
+                </li>
+                <li>
+                    <p class="p1"><img src="https://i.gtimg.cn/qqlive/img/jpgcache/files/qqvideo/l/lqojerhydlqkf9t_y.jpg"></p>
+                    <p class="p2"><input type="checkbox" checked name="" id=""></p>
+                </li>
+                <li>
+                    <p class="p1"><img src="https://i.gtimg.cn/qqlive/img/jpgcache/files/qqvideo/l/lqojerhydlqkf9t_y.jpg"></p>
+                    <p class="p2"><input type="checkbox" checked name="" id=""></p>
+                </li>
+                <li>
+                    <p class="p1"><img src="https://i.gtimg.cn/qqlive/img/jpgcache/files/qqvideo/l/lqojerhydlqkf9t_y.jpg"></p>
+                    <p class="p2"><input type="checkbox" checked name="" id=""></p>
+                </li>
+                <li>
+                    <p class="p1"><img src="https://i.gtimg.cn/qqlive/img/jpgcache/files/qqvideo/l/lqojerhydlqkf9t_y.jpg"></p>
+                    <p class="p2"><input type="checkbox" checked name="" id=""></p>
+                </li>
+                <li>
+                    <p class="p1"><img src="https://i.gtimg.cn/qqlive/img/jpgcache/files/qqvideo/l/lqojerhydlqkf9t_y.jpg"></p>
+                    <p class="p2"><input type="checkbox" checked name="" id=""></p>
+                </li>
+                <li>
+                    <p class="p1"><img src="https://i.gtimg.cn/qqlive/img/jpgcache/files/qqvideo/l/lqojerhydlqkf9t_y.jpg"></p>
+                    <p class="p2"><input type="checkbox" checked name="" id=""></p>
+                </li>
+                <li>
+                    <p class="p1"><img src="https://i.gtimg.cn/qqlive/img/jpgcache/files/qqvideo/l/lqojerhydlqkf9t_y.jpg"></p>
+                    <p class="p2"><input type="checkbox" checked name="" id=""></p>
+                </li>
 
-    <div id="images_cache"></div>
-    <table id="images_table" class="grid"></table>
-  </body>
+            </ul>
+        </div>
+
+</body>
+
 </html>
