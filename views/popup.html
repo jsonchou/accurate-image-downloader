@@ -3,55 +3,18 @@
 
 <head>
     <title>accurate-image-downloaderr</title>
+    <link rel="stylesheet" href="/styles/main.css" type="text/css" />
 
-    <link rel="stylesheet" href="../styles/main.css" type="text/css" />
-    <style>
-        *{
-            margin: 0;
-            padding: 0;
-        }
-        body
-      {
-        box-sizing: border-box;
-      } 
-      #adi-wrap{
-        min-width: 400px;
-        min-height: 250px;
-        margin: 0 auto;
-       
-        padding: 20px;
-      }
-      #adi-wrap *{
-          box-sizing: border-box;
-          list-style: none;
-      }
-      .box{ border:1px solid #ccc;padding: 10px;}
-      .box .dimension{width: 30%;}
-      .box .width,.box .height{width: 60px;height: 100%;height: 18px;border:1px solid #ccc;}
-      .box .sub{width: 30%;height: 40px; } 
-      .box .btn{width: 20%;height: 40px; border:0;text-align: center;line-height: 40px;background:#3b5998;color: #fff;cursor: pointer;font-size: 10px; } 
-
-      .box-list  ul{padding: 0;margin: 0;}
-      .box-list li{width: 33.333333%;display: inline-block;position: relative;}
-      .box-list li .p2{position: absolute;bottom: 0;left: 0;}
-      .box-list li img{width: 100%;display: block}
-
-    </style>
-
-    <script src="/lib/zepto.js"></script>
-    <script src="/scripts/defaults.js"></script>
-    <script src="/scripts/popup.js"></script>
 </head>
 
 <body>
-    <div id="adi-wrap">
-
+    <div id="app">
         <div class="box flex mb20">
             <div class="dimension">
-                <p>W:<input type="text" value="200" class="width" /> px</p>
-                <p>H:<input type="text" value="200" class="height" /> px</p>
+                <p>W:<input type="text" :value="config.width" class="width" /> px</p>
+                <p>H:<input type="text" :value="config.height" class="height" /> px</p>
             </div>
-            <input type="text" class="sub" placeholder="SAVE TO SUBFOLDER" title="Set the name of the subfolder you want to download the images to." />
+            <input type="text" class="sub" :placeholder="config.folder_name" title="Set the name of the subfolder you want to download the images to." />
             <span class="btn" disabled="true">DOWNLOAD</span>
         </div>
 
@@ -60,49 +23,18 @@
                 <label><input type="checkbox" name="" checked> ALL </label>
             </div>
             <ul class="flex start">
-                <li>
-                    <p class="p1"><img src="https://i.gtimg.cn/qqlive/img/jpgcache/files/qqvideo/l/lqojerhydlqkf9t_y.jpg"></p>
-                    <p class="p2"><input type="checkbox" checked name="" id=""></p>
+                <li v-for="item in list">
+                    <p class="p1"><img :src="item.url"></p>
+                    <p class="p2"><input type="checkbox" :checked="item.enable"></p>
                 </li>
-                <li>
-                    <p class="p1"><img src="https://i.gtimg.cn/qqlive/img/jpgcache/files/qqvideo/l/lqojerhydlqkf9t_y.jpg"></p>
-                    <p class="p2"><input type="checkbox" checked name="" id=""></p>
-                </li>
-                <li>
-                    <p class="p1"><img src="https://i.gtimg.cn/qqlive/img/jpgcache/files/qqvideo/l/lqojerhydlqkf9t_y.jpg"></p>
-                    <p class="p2"><input type="checkbox" checked name="" id=""></p>
-                </li>
-                <li>
-                    <p class="p1"><img src="https://i.gtimg.cn/qqlive/img/jpgcache/files/qqvideo/l/lqojerhydlqkf9t_y.jpg"></p>
-                    <p class="p2"><input type="checkbox" checked name="" id=""></p>
-                </li>
-                <li>
-                    <p class="p1"><img src="https://i.gtimg.cn/qqlive/img/jpgcache/files/qqvideo/l/lqojerhydlqkf9t_y.jpg"></p>
-                    <p class="p2"><input type="checkbox" checked name="" id=""></p>
-                </li>
-                <li>
-                    <p class="p1"><img src="https://i.gtimg.cn/qqlive/img/jpgcache/files/qqvideo/l/lqojerhydlqkf9t_y.jpg"></p>
-                    <p class="p2"><input type="checkbox" checked name="" id=""></p>
-                </li>
-                <li>
-                    <p class="p1"><img src="https://i.gtimg.cn/qqlive/img/jpgcache/files/qqvideo/l/lqojerhydlqkf9t_y.jpg"></p>
-                    <p class="p2"><input type="checkbox" checked name="" id=""></p>
-                </li>
-                <li>
-                    <p class="p1"><img src="https://i.gtimg.cn/qqlive/img/jpgcache/files/qqvideo/l/lqojerhydlqkf9t_y.jpg"></p>
-                    <p class="p2"><input type="checkbox" checked name="" id=""></p>
-                </li>
-                <li>
-                    <p class="p1"><img src="https://i.gtimg.cn/qqlive/img/jpgcache/files/qqvideo/l/lqojerhydlqkf9t_y.jpg"></p>
-                    <p class="p2"><input type="checkbox" checked name="" id=""></p>
-                </li>
-                <li>
-                    <p class="p1"><img src="https://i.gtimg.cn/qqlive/img/jpgcache/files/qqvideo/l/lqojerhydlqkf9t_y.jpg"></p>
-                    <p class="p2"><input type="checkbox" checked name="" id=""></p>
-                </li>
-
             </ul>
         </div>
+    </div>
+
+    <script src="/lib/zepto.js"></script>
+    <script src="/lib/vue.min.js"></script>
+    <script src="/scripts/defaults.js"></script>
+    <script src="/scripts/popup.js"></script>
 
 </body>
 
