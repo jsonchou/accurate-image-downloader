@@ -179,6 +179,8 @@ input[type='button'].danger:active {
  
  .box { border:1px solid #ccc; padding: 10px; } 
  .box .dimension { width: 30%; } 
+ .box .dimension label { width: 30px;text-align: center } 
+ 
  .box .width,.box .height { width: 60px; height: 100%; height: 18px; border:1px solid #ccc; } 
  .box .sub { width: 30%; height: 40px; } 
  .box .btn { width: 20%; height: 40px; border:0; text-align: center; line-height: 40px; background:#3b5998; color: #fff; cursor: pointer; font-size: 10px; } 
