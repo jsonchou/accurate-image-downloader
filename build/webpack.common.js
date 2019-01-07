@@ -55,7 +55,7 @@ let webpackConfig = {
         "hotOnly": true,
         "contentBase": "./",
         "historyApiFallback": false,
-        "port": 8082,
+        "port": 8083,
         "open": false,
         "quiet": false,
         "noInfo": false,

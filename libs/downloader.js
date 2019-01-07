@@ -2,6 +2,8 @@
     /* globals chrome */
     'use strict';
 
+    console.log('send_images')
+
     const imageDownloader = {
         // Source: https://support.google.com/webmasters/answer/2598805?hl=en
         imageRegex: /(?:([^:\/?#]+):)?(?:\/\/([^\/?#]*))?([^?#]*\.(?:bmp|gif|jpe?g|png|svg|webp))(?:\?([^#]*))?(?:#(.*))?/i,
@@ -110,3 +112,4 @@
     imageDownloader.linkedImages = null;
     imageDownloader.images = null;
 }());
+

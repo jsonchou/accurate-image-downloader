@@ -16,9 +16,7 @@ const vendorMap = {
         'history'
     ],
     vue: [
-        'vue',
-        'vue-router',
-        'vuex',
+        'vue'
     ]
 }
 module.exports = {
@@ -27,14 +25,14 @@ module.exports = {
         vendor: vendorMap[spa]
     },
     output: {
-        path: path.join(__dirname, `../dist/scripts`),
-        filename: `dll.${spa}.[name].js`,
+        path: path.join(__dirname, `../dist`),
+        filename: `scripts/dll.${spa}.[name].js`,
         library: '[name]'
     },
     plugins: [
         new webpack.DllPlugin({
             path: path.join(__dirname, `../dist/scripts/${spa}-[name]-manifest.json`),
-            name: '[name]'
+            name: '[name]',
         })
     ]
 }

@@ -61,8 +61,23 @@ let loaders = [{
     }
 ];
 
-let myloader = [{
+let myloader = []
+
+myloader.push({
+    test: /\.vue$/,
+    include: [path.resolve(__dirname, '..', 'src')],
+    exclude: /node_modules/,
+    use: [{
+        loader: 'vue-loader',
+        options: {
+            cacheDirectory: true
+        }
+    }]
+});
+
+myloader.push({
     test: /\.(js|jsx)$/,
+    include: [path.resolve(__dirname, '..', 'src')],
     exclude: /node_modules/,
     use: {
         loader: 'babel-loader',
@@ -70,6 +85,6 @@ let myloader = [{
             cacheDirectory: true,
         }
     }
-}];
+});
 
 module.exports = loaders.concat(myloader);

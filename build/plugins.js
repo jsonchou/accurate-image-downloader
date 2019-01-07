@@ -4,11 +4,14 @@ const path = require('path');
 const misc = require('./misc');
 const webpack = require('webpack');
 
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const BundleAnalyzerPluginPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const WebpackBuildNotifierPlugin = require('webpack-build-notifier');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+const spa = 'vue'
 
 let {
     env,
@@ -18,21 +21,25 @@ let {
 } = misc;
 
 let plugins = [
-    new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
-    }),
-    new webpack.DllReferencePlugin({
-        context: __dirname,
-        manifest: require(`../dist/scripts/vendor-manifest.json`)
-    })
+    // new webpack.DefinePlugin({
+    //     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+    // }),
+    // new webpack.DllReferencePlugin({
+    //     context: __dirname,
+    //     manifest: require(`../dist/scripts/${spa}-vendor-manifest.json`)
+    // })
 ];
 
 
 plugins.push(new MiniCssExtractPlugin({
-    path: path.resolve(__dirname, '../ui'),
-    publicPath: path.resolve(__dirname, '..'),
-    filename: 'dist/styles/page.css'
+    path: path.resolve(__dirname, '..'),
+    publicPath: path.resolve(__dirname, '..', 'dist'),
+    filename: 'styles/page.css'
 }));
+
+if (spa == 'vue') {
+    plugins.push(new VueLoaderPlugin())
+}
 
 if (env == 'p') {
 
