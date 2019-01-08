@@ -8,7 +8,7 @@
                     <span>px</span></p>
             </div>
             <input type="text" class="sub" :value="folder_name" placeholder="input a folder name" title="Set the name of the subfolder you want to download the images to." />
-            <span class="btn" @click="downloadImages" >DOWNLOAD</span>
+            <span class="btn" @click="downloadImages">DOWNLOAD</span>
         </div>
 
         <div class="box-list">
@@ -67,7 +67,6 @@
                 let { index } = e.target.dataset
                 let checked = e.target.checked;
                 let tmp = JSON.parse(JSON.stringify(me.list));
-                console.log(e, tmp, index, 'checkSingle')
                 tmp[index].enable = checked
                 me.list = tmp
                 let len2 = me.list.filter(c => c.enable).length
@@ -107,7 +106,6 @@
                 })
 
                 if (e) {
-                    console.log(e, 'e filterImg')
                     let { tag } = e.target.dataset
                     me[tag] = e.target.value
                 }
@@ -116,7 +114,6 @@
                 let h = me.height
 
                 if (cache && cache.length && w && h) {
-                    console.log('filterImg 111', cache)
                     let tmp = cache.filter(c => {
                         return c.width == w && c.height == h
                     })
@@ -157,7 +154,6 @@
             },
             async beforeCreate() {
                 chrome.runtime.onStartup.addListener(function() {
-                    console.log(1111, 'beforeCreate')
                     cacheList = []
                 })
             },
@@ -186,7 +182,6 @@
                 });
 
                 me.folder_name && chrome.downloads.onDeterminingFilename.addListener(function(item, suggest) {
-                    console.log(item, 'onDeterminingFilename')
                     suggest({ filename: me.folder_name + "/" + item.filename });
                 });
 
@@ -232,12 +227,10 @@
         },
         created: function() {
             let me = this;
-            console.log('created')
 
         },
         mounted: function() {
             let me = this;
-            console.log('mounted')
             me.init()
         },
     };
