@@ -7,8 +7,9 @@
                 <p class="flex"><label class="tc">H</label><input type="text" @input="filterImg" data-tag="height" :value="height" class="height" />
                     <span>px</span></p>
             </div>
-            <input type="text" class="sub" readonly :value="cfg.folder_name" placeholder="input a folder name" title="Set the name of the subfolder you want to download the images to." />
+            <input type="text" class="sub" readonly :value="'save to: '+cfg.folder_name" placeholder="input a folder name" title="Set the name of the subfolder you want to download the images to." />
             <span class="btn" @click="downloadImages">DOWNLOAD</span>
+            <span class="settings" @click="openSettings"><img src="/dist/images/settings.png" style="width:15px;height:15px;"></span>
         </div>
 
         <div class="box-list">
@@ -55,6 +56,12 @@
         },
         watch: {},
         methods: {
+            async openSettings(e) {
+                let me = this;
+                chrome.runtime.openOptionsPage(() => {
+                    console.log(123)
+                })
+            },
             async setSize(e) {
                 let me = this;
                 let { width, height } = e.target.dataset

@@ -1,19 +1,28 @@
 <template>
     <div class="template-inner app-config">
-        <ul>
-            <li>
-                <p class="p1">default download folder:</p>
-                <p class="p2"><input style="width:130px" v-model="folder_name" /></p>
-            </li>
-            <li>
-                <p class="p1">never download the image size of:</p>
-                <p class="p2">
-                    width:<input placeholder="image size of min width" v-model="minWidth" /> px,
-                    height:<input placeholder="image size of min height" v-model="minHeight" /> px
-                </p>
-            </li>
-            <li><button class="btn" @click="saveConfig">SAVE</button></li>
-        </ul>
+        <form action="">
+            <fieldset>
+                <legend>
+                    General
+                </legend>
+                <div class="app-config-inner">
+                    <ul>
+                        <li>
+                            <p class="p1">default download folder:</p>
+                            <p class="p2"><input style="width:130px" v-model="folder_name" /></p>
+                        </li>
+                        <li>
+                            <p class="p1">never download the image size of:</p>
+                            <p class="p2">
+                                width:<input placeholder="image size of min width" v-model="minWidth" /> px,
+                                height:<input placeholder="image size of min height" v-model="minHeight" /> px
+                            </p>
+                        </li>
+                        <li><button class="btn" @click="saveConfig">SAVE</button></li>
+                    </ul>
+                </div>
+            </fieldset>
+        </form>
     </div>
 </template>
 
