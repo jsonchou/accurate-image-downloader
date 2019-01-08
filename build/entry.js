@@ -2,5 +2,6 @@ const fs = require('fs-extra');
 const path = require('path');
 
 module.exports = {
-    appUI: path.join(__dirname, '..', 'src/index.js')
+    appIndex: path.join(__dirname, '..', 'src/index/index.js'),
+    appOptions: path.join(__dirname, '..', 'src/options/index.js')
 }

@@ -30,7 +30,7 @@ let webpackConfig = {
     output: {
         path: path.resolve(__dirname, '..', 'dist'),
         publicPath: 'dist',
-        filename: 'scripts/build.js'
+        filename: 'scripts/[name].js'
     },
     resolve: {
         alias: alias,

@@ -7,13 +7,13 @@
                 <p class="flex"><label class="tc">H</label><input type="text" @input="filterImg" data-tag="height" :value="height" class="height" />
                     <span>px</span></p>
             </div>
-            <input type="text" class="sub" :value="folder_name" placeholder="input a folder name" title="Set the name of the subfolder you want to download the images to." />
+            <input type="text" class="sub" readonly :value="cfg.folder_name" placeholder="input a folder name" title="Set the name of the subfolder you want to download the images to." />
             <span class="btn" @click="downloadImages">DOWNLOAD</span>
         </div>
 
         <div class="box-list">
             <div class="control-bar">
-                <label><input type="checkbox" class="vm" @change="checkAll" name="" :checked="all"> <label class="vm">ALL</label> </label>
+                <label for="checkAll"><input id="checkAll" name="checkAll" type="checkbox" class="vm" @change="checkAll" name="" :checked="all"> <span class="vm">ALL</span> </label>
             </div>
             <ul class="flex start">
                 <li v-for="(item,index) in list" :key="index">
@@ -21,7 +21,7 @@
                         <p class="p1"><img :data-width="item.width" :data-height="item.height" :src="item.url"></p>
                         <p class="p2">
                             <input type="checkbox" :data-index="index" @change="checkSingle" :checked="item.enable">
-                            <span>x:{{item.width}},y:{{item.height}}</span>
+                            <span @click="setSize" :data-width="item.width" :data-height="item.height">x:{{item.width}},y:{{item.height}}</span>
                         </p>
                     </div>
                 </li>
@@ -31,26 +31,44 @@
 </template>
 
 <script>
-    import "./styles/main.css"
+    import "../styles/main.css"
+    import mixins from '../api/mixins.js'
+    import defaultOpts from '../api/config.js'
 
-    const cacheKey = "accurate_tmp_storage"
+    const cacheImageKey = "accurate_tmp_images"
+    const cacheConfigKey = "accurate_tmp_config"
 
-    let cacheList = []
+    let indexConfig = {
+        all: true,
+        width: '270',
+        height: '128',
+        list: []
+    }
 
     export default {
+        mixins: [mixins],
         data() {
             return {
-                all: true,
-                width: '270',
-                height: '128',
-                folder_name: 'acccurate-temp',
-                list: []
+                cfg: defaultOpts,
+                ...indexConfig
             }
         },
-        watch: {
-
-        },
+        watch: {},
         methods: {
+            async setSize(e) {
+                let me = this;
+                let { width, height } = e.target.dataset
+                me.width = width;
+                me.height = height;
+                await me.filterImg()
+            },
+            folderNameListener(e) {
+                let me = this;
+                chrome.downloads.onDeterminingFilename.addListener(function(item, suggest) {
+                    suggest({ filename: me.cfg.folder_name + "/" + item.filename });
+                });
+
+            },
             checkAll(e) {
                 let me = this;
                 me.all = !me.all
@@ -76,21 +94,6 @@
                     me.all = false
                 }
             },
-            getCache(key) {
-                return new Promise((resolve, reject) => {
-                    try {
-                        resolve(cacheList)
-                    } catch (err) {
-                        console.log('getCache', err)
-                    }
-                })
-            },
-            setCache(list) {
-                return new Promise((resolve, reject) => {
-                    cacheList = list
-                    resolve(list)
-                })
-            },
             downloadImages(e) {
                 let me = this;
                 me.list.filter(c => c.enable).forEach(item => {
@@ -101,7 +104,7 @@
             },
             async filterImg(e) {
                 let me = this
-                let cache = await me.getCache(cacheKey).catch(err => {
+                let cache = await me.getCache(cacheImageKey).catch(err => {
                     console.log(err)
                 })
 
@@ -113,14 +116,20 @@
                 let w = me.width
                 let h = me.height
 
-                if (cache && cache.length && w && h) {
-                    let tmp = cache.filter(c => {
-                        return c.width == w && c.height == h
-                    })
-                    me.list = tmp
-                    return tmp
+                if (cache && cache.length) {
+                    let tmp = []
+                    w && (tmp = cache.filter(c => {
+                        return c.width == w
+                    }))
+                    h && (tmp = cache.filter(c => {
+                        return c.height == h
+                    }))
+                    if (tmp && tmp.length) {
+                        me.list = tmp
+                    } else if (!w && !h) {
+                        me.list = cache
+                    }
                 }
-                return []
             },
             getImgInfo(url) {
 
@@ -153,12 +162,18 @@
 
             },
             async beforeCreate() {
-                chrome.runtime.onStartup.addListener(function() {
-                    cacheList = []
+                let me = this
+                chrome.runtime.onStartup.addListener(async function() {
+                    await me.removeCache(cacheImageKey)
                 })
             },
             async init() {
                 let me = this;
+
+                let cfg = await me.getCache(cacheConfigKey) || {}
+                console.log(1111111111, cfg)
+                Object.assign(this.$data, { cfg })
+
                 // Get images on the page
                 chrome.windows.getCurrent(function(currentWindow) {
                     chrome.tabs.query({
@@ -181,9 +196,7 @@
                     });
                 });
 
-                me.folder_name && chrome.downloads.onDeterminingFilename.addListener(function(item, suggest) {
-                    suggest({ filename: me.folder_name + "/" + item.filename });
-                });
+                me.folderNameListener()
 
                 chrome.runtime.onMessage.addListener(async function(result) {
                     let list = []
@@ -216,10 +229,14 @@
 
                     if (list && list.length) {
                         console.log('init list', list)
-                        cacheList = await me.setCache(list).catch(err => {
+                        // remove the miniWidth & minHeight images
+                        let tmp = list.filter(c => {
+                            return c.width >= me.cfg.minWidth && c.height >= me.cfg.minHeight
+                        })
+                        await me.setCache(cacheImageKey, tmp).catch(err => {
                             console.log(err)
                         })
-                        me.list = list
+                        me.list = tmp
                     }
 
                 });
@@ -227,7 +244,6 @@
         },
         created: function() {
             let me = this;
-
         },
         mounted: function() {
             let me = this;
