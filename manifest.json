@@ -1,5 +1,6 @@
 {
     "name": "accurate-image-downloader",
+    "short_name": "accurate",
     "version": "1.0.0",
     "background": {
         "scripts": ["/dist/scripts/options.js"],

@@ -9,7 +9,7 @@
             </div>
             <input type="text" class="sub" readonly :value="'save to: '+cfg.folder_name" placeholder="input a folder name" title="Set the name of the subfolder you want to download the images to." />
             <span class="btn" @click="downloadImages">DOWNLOAD</span>
-            <span class="settings" @click="openSettings"><img src="/dist/images/settings.png" style="width:15px;height:15px;"></span>
+            <span class="settings pointer" @click="openSettings">Settings <img class="vm" src="/dist/images/settings.png" style="width:15px;height:15px;"></span>
         </div>
 
         <div class="box-list">
