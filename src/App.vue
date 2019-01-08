@@ -2,23 +2,28 @@
     <div class="template-inner">
         <div class="box flex mb20">
             <div class="dimension">
-                <p class="flex"><label class="tc">W</label><input type="text" @blur="filterImg" data-tag="width" :value="width" class="width" />
+                <p class="flex"><label class="tc">W</label><input type="text" @input="filterImg" data-tag="width" :value="width" class="width" />
                     <span>px</span></p>
-                <p class="flex"><label class="tc">H</label><input type="text" @blur="filterImg" data-tag="height" :value="height" class="height" />
+                <p class="flex"><label class="tc">H</label><input type="text" @input="filterImg" data-tag="height" :value="height" class="height" />
                     <span>px</span></p>
             </div>
             <input type="text" class="sub" :value="folder_name" placeholder="input a folder name" title="Set the name of the subfolder you want to download the images to." />
-            <span class="btn" disabled="true">DOWNLOAD</span>
+            <span class="btn" @click="downloadImages" >DOWNLOAD</span>
         </div>
 
         <div class="box-list">
             <div class="control-bar">
-                <label><input type="checkbox" name="" checked> ALL </label>
+                <label><input type="checkbox" class="vm" @change="checkAll" name="" :checked="all"> <label class="vm">ALL</label> </label>
             </div>
             <ul class="flex start">
-                <li v-for="item in list" :key="index">
-                    <p class="p1"><img :data-size="item.width +'-'+ item.height" :src="item.url"></p>
-                    <p class="p2"><input type="checkbox" :checked="item.enable"></p>
+                <li v-for="(item,index) in list" :key="index">
+                    <div>
+                        <p class="p1"><img :data-width="item.width" :data-height="item.height" :src="item.url"></p>
+                        <p class="p2">
+                            <input type="checkbox" :data-index="index" @change="checkSingle" :checked="item.enable">
+                            <span>x:{{item.width}},y:{{item.height}}</span>
+                        </p>
+                    </div>
                 </li>
             </ul>
         </div>
@@ -35,6 +40,7 @@
     export default {
         data() {
             return {
+                all: true,
                 width: '270',
                 height: '128',
                 folder_name: 'acccurate-temp',
@@ -45,6 +51,32 @@
 
         },
         methods: {
+            checkAll(e) {
+                let me = this;
+                me.all = !me.all
+                let tmp = JSON.parse(JSON.stringify(me.list));
+                tmp = tmp.map(c => {
+                    c.enable = me.all
+                    return c
+                })
+                me.list = tmp
+            },
+            checkSingle(e) {
+                let me = this;
+                let len = me.list.length
+                let { index } = e.target.dataset
+                let checked = e.target.checked;
+                let tmp = JSON.parse(JSON.stringify(me.list));
+                console.log(e, tmp, index, 'checkSingle')
+                tmp[index].enable = checked
+                me.list = tmp
+                let len2 = me.list.filter(c => c.enable).length
+                if (len == len2) {
+                    me.all = true
+                } else {
+                    me.all = false
+                }
+            },
             getCache(key) {
                 return new Promise((resolve, reject) => {
                     try {
@@ -60,18 +92,11 @@
                     resolve(list)
                 })
             },
-            downloadImages: function() {
-                var checkedImages = [];
-                for (var i = 0; i < visibleImages.length; i++) {
-                    if ($('#image' + i).hasClass('checked')) {
-                        checkedImages.push(visibleImages[i]);
-                    }
-                }
-                ls.image_count = checkedImages.length;
-                ls.image_number = 1;
-                checkedImages.forEach(function(checkedImage) {
-                    chrome.downloads.download({
-                        url: checkedImage
+            downloadImages(e) {
+                let me = this;
+                me.list.filter(c => c.enable).forEach(item => {
+                    item.url && chrome.downloads.download({
+                        url: item.url
                     });
                 });
             },
@@ -160,8 +185,13 @@
                     });
                 });
 
+                me.folder_name && chrome.downloads.onDeterminingFilename.addListener(function(item, suggest) {
+                    console.log(item, 'onDeterminingFilename')
+                    suggest({ filename: me.folder_name + "/" + item.filename });
+                });
+
                 chrome.runtime.onMessage.addListener(async function(result) {
-                    let list = me.list;
+                    let list = []
                     let arr = [];
                     if (Array.isArray(result.linkedImages)) {
                         arr = arr.concat(result.linkedImages)
@@ -190,11 +220,11 @@
                     })
 
                     if (list && list.length) {
-                        let doneSetCache = await me.setCache(list).catch(err => {
+                        console.log('init list', list)
+                        cacheList = await me.setCache(list).catch(err => {
                             console.log(err)
                         })
-                        cacheList = doneSetCache
-                        await me.filterImg()
+                        me.list = list
                     }
 
                 });
