@@ -18,8 +18,8 @@
     },
     "manifest_version": 2,
     "minimum_chrome_version": "31",
-    "permissions": ["activeTab", "storage", "downloads", "http://*/*", "https://*/*"],
+    "permissions": ["activeTab", "tabs", "storage", "downloads", "clipboardWrite", "clipboardRead", "http://*/*", "https://*/*"],
     "update_url": "https://clients2.google.com/service/update2/crx",
     "options_page": "/dist/options.html",
-    "web_accessible_resources": ["/dist/images/open.png", "/dist/images/download.png"]
+    "web_accessible_resources": ["/dist/images/*", "/dist/scripts/", "/dist/styles/*", "/dist/fonts/*", "/libs/*"]
 }

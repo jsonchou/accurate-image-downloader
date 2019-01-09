@@ -1,5 +1,6 @@
 <template>
     <div class="template-inner">
+        <div class="tip f10" :class="[tip?'on':'']">copy done</div>
         <div class="box flex mb20">
             <div class="dimension">
                 <p class="flex"><label class="tc">W</label><input type="text" @input="filterImg" data-tag="width" :value="width" class="width" />
@@ -9,7 +10,7 @@
             </div>
             <input type="text" class="sub" readonly :value="'save to: '+cfg.folder_name" placeholder="input a folder name" title="Set the name of the subfolder you want to download the images to." />
             <span class="btn" @click="downloadImages">DOWNLOAD</span>
-            <span class="settings pointer" @click="openSettings">Settings <img class="vm" src="/dist/images/settings.png" style="width:15px;height:15px;"></span>
+            <span class="settings pointer f10" @click="openSettings">Settings <i class="icon iconfont icon-icon_shezhi"></i></span>
         </div>
 
         <div class="box-list">
@@ -18,13 +19,21 @@
             </div>
             <ul class="flex start">
                 <li v-for="(item,index) in list" :key="index">
-                    <div>
-                        <p class="p1"><img :data-width="item.width" :data-height="item.height" :src="item.url"></p>
-                        <p class="p2">
-                            <input type="checkbox" :data-index="index" @change="checkSingle" :checked="item.enable">
-                            <span @click="setSize" :data-width="item.width" :data-height="item.height">x:{{item.width}},y:{{item.height}}</span>
-                        </p>
-                    </div>
+
+                    <p class="p1"><img :data-width="item.width" :data-height="item.height" :src="item.url"></p>
+                    <p class="p2">
+                        <input type="checkbox" :data-index="index" @change="checkSingle" :checked="item.enable">
+                        <span @click="setSize" :data-width="item.width" :data-height="item.height">x:{{item.width}},y:{{item.height}}</span>
+                    </p>
+                    <p class="p3 f10 ">
+                        <span class="s pointer" title="copy">
+                            <i class="icon iconfont icon-icon_fuzhi copy" @click="bindCopy" :data-url="item.url"></i>
+                        </span>
+                        <span class="s view pointer" title="view">
+                            <i class="icon iconfont icon-icon_yulan view" @click="bindView" :data-url="item.url"></i>
+                        </span>
+                    </p>
+
                 </li>
             </ul>
         </div>
@@ -40,9 +49,10 @@
     const cacheConfigKey = "accurate_tmp_config"
 
     let indexConfig = {
+        tip: false,
         all: true,
-        width: '270',
-        height: '128',
+        width: '',
+        height: '',
         list: []
     }
 
@@ -56,6 +66,31 @@
         },
         watch: {},
         methods: {
+            copyToClipboard(text) {
+                const input = document.createElement('input');
+                input.style.position = 'fixed';
+                input.style.opacity = 0;
+                input.value = text;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('Copy');
+                document.body.removeChild(input);
+            },
+            bindCopy(e) {
+                let me = this;
+                let { url } = e.target.dataset
+                me.copyToClipboard(url)
+                me.tip = true
+                setTimeout(() => {
+                    me.tip = false
+                }, 2000)
+            },
+            bindView(e) {
+                let me = this;
+                console.log(1234, e)
+                let { url } = e.target.dataset
+                chrome.tabs.create({ url });
+            },
             async openSettings(e) {
                 let me = this;
                 chrome.runtime.openOptionsPage(() => {
@@ -177,7 +212,7 @@
             async init() {
                 let me = this;
 
-                let cfg = await me.getCache(cacheConfigKey) || {}
+                let cfg = await me.getCache(cacheConfigKey) || defaultOpts
                 console.log(1111111111, cfg)
                 Object.assign(this.$data, { cfg })
 
@@ -214,38 +249,40 @@
                     if (Array.isArray(result.images)) {
                         arr = arr.concat(result.images)
                     }
-                    arr.map(item => {
-                        list.push({
-                            url: item,
-                            enable: true
-                        });
-                    })
-                    let proms = []
-                    list.map(async item => {
-                        proms.push(me.getImgInfo(item.url))
-                    })
-
-                    let res = await Promise.all(proms).catch(err => {
-                        console.log(err)
-                    })
-
-                    res.map((item, index) => {
-                        list[index].width = item.width;
-                        list[index].height = item.height;
-                    })
-
-                    if (list && list.length) {
-                        console.log('init list', list)
-                        // remove the miniWidth & minHeight images
-                        let tmp = list.filter(c => {
-                            return c.width >= me.cfg.minWidth && c.height >= me.cfg.minHeight
+                    if (arr && arr.length) {
+                        arr.map(item => {
+                            list.push({
+                                url: item,
+                                enable: true
+                            });
                         })
-                        await me.setCache(cacheImageKey, tmp).catch(err => {
+                        let proms = []
+                        list.length && list.map(async item => {
+                            item.url && proms.push(me.getImgInfo(item.url))
+                        })
+
+                        let res = await Promise.all(proms).catch(err => {
                             console.log(err)
                         })
-                        me.list = tmp
-                    }
 
+                        res.map((item, index) => {
+                            list[index].width = item.width;
+                            list[index].height = item.height;
+                        })
+
+                        if (list && list.length) {
+                            console.log('init list', list)
+                            // remove the miniWidth & minHeight images
+                            let tmp = list.filter(c => {
+                                return c.width >= me.cfg.minWidth && c.height >= me.cfg.minHeight
+                            })
+                            await me.setCache(cacheImageKey, tmp).catch(err => {
+                                console.log(err)
+                            })
+                            me.list = tmp
+
+                        }
+                    }
                 });
             }
         },

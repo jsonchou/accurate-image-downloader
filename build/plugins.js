@@ -21,13 +21,13 @@ let {
 } = misc;
 
 let plugins = [
-    // new webpack.DefinePlugin({
-    //     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
-    // }),
-    // new webpack.DllReferencePlugin({
-    //     context: __dirname,
-    //     manifest: require(`../dist/scripts/${spa}-vendor-manifest.json`)
-    // })
+    new webpack.DefinePlugin({
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+    }),
+    new webpack.DllReferencePlugin({
+        context: __dirname,
+        manifest: require(`../dist/scripts/${spa}-vendor-manifest.json`)
+    })
 ];
 
 
@@ -42,7 +42,6 @@ if (spa == 'vue') {
 }
 
 if (env == 'p') {
-
 
     plugins.push(new webpack.BannerPlugin({
         banner: `/**
